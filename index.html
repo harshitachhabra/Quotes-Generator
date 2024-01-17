@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotes</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+        }
+
+        #quoteContainer {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            width: 70%;
+            box-sizing: border-box;
+        }
+
+        #quoteList {
+            list-style-type: none;
+            padding: 0;
+            border-left: 1px solid #ccc;
+            padding-left: 10px;
+            margin-top: 10px;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .buttons {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="quoteContainer"></div>
+        <ul id="quoteList"></ul>
+    </div>
+
+    <div class="buttons">
+        <button onclick="getQuote()">Get quote</button>
+        <button onclick="addQuote()">+</button>
+    </div>
+
+    <script>
+        const quoteContainer = document.getElementById("quoteContainer");
+        const quoteList = document.getElementById("quoteList");
+
+        async function getQuote() {
+            const url = 'https://quotes15.p.rapidapi.com/quotes/random/';
+            const options = {
+                method: 'GET',
+                headers: {
+                    'X-RapidAPI-Key': '1e1388180bmsh80fcd0463e8eb8cp184c4ajsn4330e10eb379',
+                    'X-RapidAPI-Host': 'quotes15.p.rapidapi.com'
+                }
+            };
+
+            try {
+                const response = await fetch(url, options);
+                const result = await response.json();
+
+                // Update the HTML content based on the response structure
+                if (result && result.content) {
+                    // Display the quote in the box
+                    quoteContainer.innerHTML = `<p>${result.content}</p><p>- ${result.originator && result.originator.name}</p>`;
+                } else {
+                    quoteContainer.innerHTML = '<p>No quote available at the moment.</p>';
+                }
+            } catch (error) {
+                console.error(error);
+                quoteContainer.innerHTML = '<p>Error fetching quote. Please try again later.</p>';
+            }
+        }
+
+        function addQuote() {
+            const currentQuote = quoteContainer.innerHTML;
+            if (currentQuote) {
+                // Create a new list item for the quote
+                const listItem = document.createElement('li');
+                listItem.innerHTML = currentQuote;
+
+                // Append the new list item to the quoteList
+                quoteList.appendChild(listItem);
+            }
+        }
+    </script>
+</body>
+</html>
